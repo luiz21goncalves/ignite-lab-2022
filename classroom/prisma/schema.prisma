@@ -6,3 +6,37 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Student {
+  id           String       @id @default(uuid())
+  auth_user_id String?      @unique
+  enrollments  Enrollment[]
+  created_at   DateTime     @default(now())
+  updated_at   DateTime     @updatedAt
+
+  @@map("students")
+}
+
+model Course {
+  id         String       @id @default(uuid())
+  title      String
+  slug       String       @unique
+  enrolledOn Enrollment[]
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+
+  @@map("courses")
+}
+
+model Enrollment {
+  id          String    @id @default(uuid())
+  student     Student   @relation(fields: [student_id], references: [id])
+  student_id  String
+  course      Course    @relation(fields: [course_id], references: [id])
+  course_id   String
+  canceled_at DateTime?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+
+  @@map("enrollments")
+}

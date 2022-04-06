@@ -6,3 +6,43 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Customer {
+  id           String     @id @default(uuid())
+  auth_user_id String?    @unique
+  purchases    Purchase[]
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
+
+  @@map("customers")
+}
+
+model Product {
+  id         String     @id @default(uuid())
+  title      String
+  slug       String     @unique
+  purchaseOn Purchase[]
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+
+  @@map("products")
+}
+
+enum PurchasesStatus {
+  PENDING
+  APPROVED
+  FAILED
+}
+
+model Purchase {
+  id          String          @id @default(uuid())
+  status      PurchasesStatus @default(PENDING)
+  customer    Customer        @relation(fields: [customer_id], references: [id])
+  customer_id String
+  product     Product         @relation(fields: [product_id], references: [id])
+  product_id  String
+  created_at  DateTime        @default(now())
+  updated_at  DateTime        @updatedAt
+
+  @@map("purchases")
+}
