@@ -23,7 +23,8 @@ import { ApolloGatewayDriver, ApolloGatewayDriverConfig } from '@nestjs/apollo';
             willSendRequest({ request, context }) {
               request.http.headers.set(
                 'Authorization',
-                context?.['headers']?.['authorization'],
+                context?.['headers']?.['authorization'] ??
+                  context?.['req']?.['headers']?.['authorization'],
               );
             },
           });
